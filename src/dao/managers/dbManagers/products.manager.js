@@ -4,14 +4,20 @@ export default class ProductsManager {
     getallProducts = async () => {
         try {
             const products = await productsModel.find({});
+            if (products.length === 0) {
+                return ("No products found");
+            }
             return products;
         } catch (error) {
             throw new Error("Error getting products");
         }
     }
-    getProductsById = async (id) => {
+    getProductsById = async (pid) => {
         try {
-            const product = await productsModel.findById({_id: id});
+            const product = await productsModel.findById({_id: pid});
+            if (!product) {
+                return ("No product found");
+            }
             return product;
         } catch (error) {
             throw new Error("Error getting product"); 
@@ -32,15 +38,15 @@ export default class ProductsManager {
     }
     updateProduct = async (idUpdate, product) => {
         try {
-            const updateProduct = await product.updateOne({ _id: idUpdate }, product);
+            const updateProduct = await productsModel.updateOne({ _id: idUpdate }, product);
             return updateProduct;
         } catch (error) {
             throw new Error("Error updating product");
         }
     }
-    deleteProduct = async (id) => {
+    deleteProduct = async (pid) => {
         try {
-            const deleteProduct = await productsModel.deleteOne({ _id: id });
+            const deleteProduct = await productsModel.deleteOne({ _id: pid });
             return deleteProduct;
         } catch (error) {
             throw new Error("Error deleting product");

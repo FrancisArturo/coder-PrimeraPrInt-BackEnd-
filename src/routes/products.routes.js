@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import ProductsManager from '../dao/managers/dbManagers/products.manager.js';
-import { productsModel }  from '../dao/models/products.models.js';
+//import { productsModel }  from '../dao/models/products.models.js';
 
 
 
@@ -18,6 +18,11 @@ export default class productsRoutes {
         this.router.get(`${this.path}`, async (req, res) => {
             try {
                 const products = await this.productsManager.getallProducts();
+                if (products === "No products found") {
+                    return res.json({
+                        message: "No products found",
+                    })
+                }
                 return res.json({
                     message: "Products retrieved successfully",
                     data: products
@@ -27,10 +32,15 @@ export default class productsRoutes {
             }
         }
         );
-        this.router.get(`${this.path}/:cid`, async (req, res) => {
+        this.router.get(`${this.path}/:pid`, async (req, res) => {
             try {
-                const { cid } = req.params;
-                const product = await this.productsManager.getProductsById(cid);
+                const { pid } = req.params;
+                const product = await this.productsManager.getProductsById(pid);
+                if (product === "No product found") {
+                    return res.json({
+                        message: "No product found",
+                    })
+                }
                 return res.json({
                     message: "Product retrieved successfully",
                     data: product
@@ -40,13 +50,19 @@ export default class productsRoutes {
             }
         }
         );
-        this.router.delete(`${this.path}/:cid`, (req, res) => {
+        this.router.delete(`${this.path}/:pid`, async (req, res) => {
             try {
-                const { cid } = req.params;
-                const product = this.productsManager.deleteProduct(cid);
+                const { pid } = req.params;
+                const productFind = await this.productsManager.getProductsById(pid);
+                if (productFind === "No product found") {
+                    return res.json({
+                        message: "No product found",
+                    })
+                }
+                const productDelete = this.productsManager.deleteProduct(pid);
                 return res.json({
                     message: "Product deleted successfully",
-                    data: product
+                    data: productDelete
                 })
             } catch (error) {
                 res.status(400).json({ message: error.message });
@@ -72,11 +88,17 @@ export default class productsRoutes {
         }
         );
 
-        this.router.put(`${this.path}/:cid`, async (req, res) => {
+        this.router.put(`${this.path}/:pid`, async (req, res) => {
             try {
-                const { cid } = req.params;
+                const { pid } = req.params;
+                const productFind = await this.productsManager.getProductsById(pid);
+                if (productFind === "No product found") {
+                    return res.json({
+                        message: "No product found",
+                    })
+                }
                 const product = req.body;
-                const updateProduct = await this.productsManager.updateProduct(cid, product);
+                const updateProduct = await this.productsManager.updateProduct(pid, product);
                 return res.json({
                     message: "Product updated successfully",
                     data: updateProduct
