@@ -1,0 +1,18 @@
+<div>
+    <h1>Home</h1>
+    <h2>Products List</h2>
+    {{#if products}}
+        {{#each products}}
+            <div>
+                <h3>{{this.title}}</h3>
+                <p>description: {{this.description}}</p>
+                <p>price: {{this.price}}</p>
+                <p>category: {{this.category}}</p>
+                <p>stock: {{this.stock}} </p>
+            </div>
+        {{/each }} 
+    
+    {{else}}
+        <p>No products found</p>
+    {{/if}}
+</div>

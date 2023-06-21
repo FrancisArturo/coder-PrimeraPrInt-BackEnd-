@@ -59,11 +59,15 @@ export default class App {
     }
     initHandlebars() {
         this.app.engine(
-            "hbs",
-            handlebars.engine()
+            "handlebars",
+            handlebars.engine({
+                runtimeOptions: {
+                    allowProtoPropertiesByDefault: true,
+                    allowProtoMethodsByDefault: true,
+                },
+            })
         );
-        this.app.set("view engine", "hbs");
+        this.app.set("view engine", "handlebars");
         this.app.set("views", __dirname + "/views");
     }
- 
 }
