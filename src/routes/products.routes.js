@@ -3,11 +3,11 @@ import ProductsManager from '../dao/managers/dbManagers/products.manager.js';
 
 
 
-
 export default class productsRoutes {
     path = '/products';
     router = Router();
-    productsManager = new ProductsManager();
+    productsManager = new ProductsManager()
+    
 
     constructor() {
         this.initializeRoutes();
@@ -17,15 +17,7 @@ export default class productsRoutes {
         this.router.get(`${this.path}`, async (req, res) => {
             try {
                 const products = await this.productsManager.getallProducts();
-                if (products === "No products found") {
-                    return res.json({
-                        message: "No products found",
-                    })
-                }
-                return res.json({
-                    message: "Products retrieved successfully",
-                    data: products
-                })
+                res.render("home", { products });
             } catch (error) {
                 res.status(400).json({ message: error.message });
             }
@@ -70,22 +62,43 @@ export default class productsRoutes {
         );
         this.router.post(this.path, async (req, res) => {
             try {
-                const product = req.body;
-                const newProduct = await this.productsManager.addProduct(product);
-                if (newProduct === "Product already exists") {
-                    return res.json({
-                        message: "Product already exists",
-                    })
-                }
-                return res.json({
-                    message: "Product added successfully",
-                    data: newProduct
-                })
+                const { io, body } = req;
+                // const newProduct = await this.productsManager.addProduct(body);
+                // if (newProduct === "Product already exists") {
+                //     return res.json({
+                //         message: "Product already exists",
+                //     })
+                // }
+                //console.log(io)
+                //emit para enviar el mensaje
+                io.emit("newProduct", "hola");
             } catch (error) {
                 res.status(400).json({ message: error.message });
             }
         }
         );
+        // this.router.post(this.path, async (req, res) => {
+        //     socket.on("addProduct", async (data) => {
+        //         try {
+        //             const product = req.body;
+        //             const newProduct = await this.productsManager.addProduct(product);
+        //             if (newProduct === "Product already exists") {
+        //                 return res.json({
+        //                     message: "Product already exists",
+        //                 })
+        //             }
+        //             socket.emit("productAdded", newProduct);
+        //             return res.json({
+        //                 message: "Product added successfully",
+        //                 data: newProduct
+        //             })
+        //         } catch (error) {
+        //             res.status(400).json({ message: error.message });
+        //         }
+        //     });
+        // }
+        // );  
+
 
         this.router.put(`${this.path}/:pid`, async (req, res) => {
             try {
